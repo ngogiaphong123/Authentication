@@ -4,10 +4,7 @@ module.exports.register = async (req,res,next) => {
     const {username,email,password} = req.body;
     try {
         const user = await User.create({username,email,password});
-        res.status(201).json({
-            success: true,
-            user
-        })
+        sentToken(user,201,res);
     } catch (error) {
         next(error);
     }
@@ -27,10 +24,7 @@ module.exports.login = async (req,res,next) => {
         if(!isMatch) {
             return next(new ErrorResponse('Invalid Credentials',401));
         }
-        res.status(201).json({
-            success: true,
-            token: "random-token"
-        })
+        sentToken(user,201,res);
     } catch (error) {
         res.status(500).send({
             success: false,
@@ -45,4 +39,9 @@ module.exports.forgotPassword = (req,res,next) => {
 
 module.exports.resetPassword = (req,res,next) => {
     res.send("Reset Password Route");
+}
+
+const sentToken = (user, statusCode, res) => {
+    const token = user.getSignedToken();
+    res.status(200).json({success: true, token: token});
 }

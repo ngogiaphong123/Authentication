@@ -3,6 +3,7 @@ require('dotenv').config({path : "./config.env"});
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const errorHandler = require('./middleware/error');
 //? Connect db
 const connectDb = require('./config/db');
 connectDb();
@@ -11,6 +12,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
 app.use('/api/auth',require('./routes/auth'));
+//? Error handler
+app.use(errorHandler);
 //? Server starting up
 const PORT = process.env.PORT || 8080;
 const sever = app.listen(PORT, () => {
